@@ -1,0 +1,30 @@
+git init
+
+git remote (看使用者有誰)
+
+git remote add "自訂使用者名稱"  "網址"
+
+git log
+
+git add .(下載這資料夾全資料到緩存)	/	git add "檔案"(下載這檔案到緩存)
+
+git commit -m "total(敘述文字)"		(提交你的變更到本地 Git 倉庫)
+
+
+git push -u(預設改成以後都用自訂使用者) "上方自訂使用者名稱" master	(把檔案傳到git)
+git push (也是把檔案傳到git，要先有指定的使用者，之後就可以打下面這一行)
+
+git clone "網址"  (下載資料)
+
+git pull origin master  (如果遠端倉庫有新的提交，你可能需要解決合併衝突。變更連線倉庫)
+
+git push rainy --delete 分支名稱	(刪除分支)
+git checkout -b 分支名稱		(新增分支)
+git checkout  分支名稱			(切換分支)
+
+git clone -b 分支名稱 https://github.com/rainy920824/Topics.git		(分支下載)
+
+Git 無法確定你的作者身份，打下面配置你的使用者名稱和電子郵件地址
+git config --global user.email "your_email@example.com"
+git config --global user.name "Your Name"
+your_email@example.com 替換為你的電子郵件地址，並將 Your Name 替換為你的名字或暱稱。

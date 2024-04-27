@@ -1,0 +1,10 @@
+D:\專題\加解密\WindowsFormsApp6\Output\bin\Debug\Output.exe.config
+D:\專題\加解密\WindowsFormsApp6\Output\bin\Debug\Output.exe
+D:\專題\加解密\WindowsFormsApp6\Output\bin\Debug\Output.pdb
+D:\專題\加解密\WindowsFormsApp6\Output\obj\Debug\Output.csprojAssemblyReference.cache
+D:\專題\加解密\WindowsFormsApp6\Output\obj\Debug\Output.Form1.resources
+D:\專題\加解密\WindowsFormsApp6\Output\obj\Debug\Output.Properties.Resources.resources
+D:\專題\加解密\WindowsFormsApp6\Output\obj\Debug\Output.csproj.GenerateResource.cache
+D:\專題\加解密\WindowsFormsApp6\Output\obj\Debug\Output.csproj.CoreCompileInputs.cache
+D:\專題\加解密\WindowsFormsApp6\Output\obj\Debug\Output.exe
+D:\專題\加解密\WindowsFormsApp6\Output\obj\Debug\Output.pdb

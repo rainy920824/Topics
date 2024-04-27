@@ -1,0 +1,266 @@
+OUT
+
+
+
+
+
+//int localPort = 12345;
+            //TcpListener tcpListener = new TcpListener(IPAddress.Any, localPort);
+            //tcpListener.Start();
+            //TcpClient tcpClient = tcpListener.AcceptTcpClient();
+            //NetworkStream networkStream = tcpClient.GetStream();
+            //BinaryReader reader = new BinaryReader(networkStream);
+            //saveFileDialog1.ShowDialog();
+            //string savePath = saveFileDialog1.FileName;
+            //FileStream fileStream = new FileStream(savePath, FileMode.Append, FileAccess.Write);
+            //while (true)
+            //{
+            //    // 接收分片大小
+            //    int bytesRead = reader.ReadInt32();
+
+            //    // 如果讀取到的大小為0，表示檔案接收完成
+            //    if (bytesRead == 0)
+            //    {
+            //        label1.Text = "檔案接收完成。";
+            //        break;
+            //    }
+
+            //    // 接收分片內容
+            //    byte[] buffer = reader.ReadBytes(bytesRead);
+            //    fileStream.Write(buffer, 0, bytesRead);
+            //}
+            //tcpListener.Stop();
+            //byte[] rawdata = udp.Receive(ref ep);
+            //byte[] buffer = new byte[1024];
+            //string rawstring = Encoding.UTF8.GetString(rawdata);
+            //string[] token = rawstring.Split('@');
+            //switch (token[0])
+            //{
+            //    case "size":
+            //        op1 = token[1];
+            //        fout.Write(buffer, 0, int.Parse(op1));
+            //        break;
+            //}
+
+
+
+
+IN
+ //FileStream fin = new FileStream(label3.Text, FileMode.Open);
+            //byte[] buffer = new byte[1024];
+            //int len;
+            //len = fin.Read(buffer,0,buffer.Length);
+            //while (len > 0)
+            //{
+            //    send_msg_to("size@" + len, textBox1.Text, int.Parse(textBox2.Text));
+            //    len = fin.Read(buffer, 0, buffer.Length);
+            //}
+
+
+//FileStream fin = new FileStream(label3.Text, FileMode.Open);
+            //byte[] buffer = new byte[1024];
+            //int len;
+            //len = fin.Read(buffer,0,buffer.Length);
+            //while (len > 0)
+            //{
+            //    send_msg_to("size@" + len, textBox1.Text, int.Parse(textBox2.Text));
+            //    len = fin.Read(buffer, 0, buffer.Length);
+            //}
+
+
+
+
+
+正式
+
+OUT
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.IO;
+namespace go1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            
+        }
+        string savePath;
+        private void Form1_Load(object sender, EventArgs e)
+        {
+           
+            
+        }
+        TcpListener tcpListener = new TcpListener(IPAddress.Any, 3000);
+        private void button1_Click(object sender, EventArgs e)
+        {
+            tcpListener.Start();
+            TcpClient tcpClient = tcpListener.AcceptTcpClient();
+            saveFileDialog1.ShowDialog();
+            savePath = saveFileDialog1.FileName;
+            NetworkStream networkStream = tcpClient.GetStream();
+            BinaryReader reader = new BinaryReader(networkStream);
+            FileStream fout = new FileStream(savePath, FileMode.Create);
+            while (true)
+            {
+                // 分片大小
+                int bytesRead = reader.ReadInt32();
+                // 讀取=0，表示檔案接收完成
+                if (bytesRead == 0)
+                {
+                    label1.Text = "檔案接收完成。";
+                    break;
+                }
+
+                // 分片內容
+                byte[] buffer = reader.ReadBytes(bytesRead);
+                byte[] plain1 = rsa.Decrypt(buffer, false);
+                fout.Write(plain1, 0, plain1.Length);
+            }
+            tcpListener.Stop();
+            fout.Close();
+            button1.Visible = true;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            TcpClient tcpClient = new TcpClient();
+            tcpClient.Connect(textBox1.Text, int.Parse(textBox2.Text));
+            NetworkStream networkStream = tcpClient.GetStream();
+            BinaryWriter writer = new BinaryWriter(networkStream);
+            writer.Write(rsa.ToXmlString(false));
+            button1_Click(sender, e);
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+
+
+
+
+
+
+IN
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.IO;
+
+namespace go2
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            button1_Click(sender, e);
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            label3.Text = openFileDialog1.FileName;
+            button2.Visible = true;
+        }
+        RSACryptoServiceProvider rsa1 = new RSACryptoServiceProvider();
+        private void button2_Click(object sender, EventArgs e)
+        {
+            rsa1.FromXmlString(key);
+            TcpClient tcpClient = new TcpClient();
+            tcpClient.Connect(textBox1.Text, int.Parse(textBox2.Text));
+            NetworkStream networkStream = tcpClient.GetStream();
+            BinaryWriter writer = new BinaryWriter(networkStream);
+            FileStream fileStream = new FileStream(label3.Text, FileMode.Open, FileAccess.Read);
+            byte[] buffer = new byte[117];                                                             //1KB
+            int len;
+            while ((len = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                byte[] cipher = rsa1.Encrypt(buffer, false);
+                // 傳送分片大小
+                writer.Write(cipher.Length);
+
+                // 傳送分片內容
+                writer.Write(cipher, 0, cipher.Length);
+
+            }
+            writer.Write(0);
+            label4.Text="檔案傳送完成。";
+        }
+        private void send_msg_to(string mydata, string ip, int port)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(mydata);
+            UdpClient udp = new UdpClient();
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ip), port);
+            udp.Send(data, data.Length, ep);
+        }
+        TcpListener tcpListener = new TcpListener(IPAddress.Any, 3001);
+        string key;
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            tcpListener.Start();
+            TcpClient tcpClient = tcpListener.AcceptTcpClient();
+            NetworkStream networkStream = tcpClient.GetStream();
+            BinaryReader reader = new BinaryReader(networkStream);
+            key = reader.ReadString();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            
+        }
+    }
+}
