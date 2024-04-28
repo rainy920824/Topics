@@ -16,18 +16,19 @@ namespace WindowsFormsApp8
     {
         private FilterInfoCollection videoDevices;
         private VideoCaptureDevice videoSource;
+        private Rectangle captureRect; // 用于捕获图像的矩形区域
+
         public Form1()
         {
             InitializeComponent();
             InitializeCamera();
-            //pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            this.KeyPreview = true; // 啟用窗體接收按鍵事件
-            this.KeyDown += MainForm_KeyDown; // 綁定按鍵按下事件
+            InitializeCaptureRect();
+            this.KeyPreview = true;
+            this.KeyDown += MainForm_KeyDown;
             this.Resize += MainForm_Resize;
-            int x = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
-            int y = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
-            this.Location = new Point(x, y);
+            CenterForm();
         }
+
         private void InitializeCamera()
         {
             videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
@@ -39,18 +40,28 @@ namespace WindowsFormsApp8
 
             videoSource = new VideoCaptureDevice(videoDevices[0].MonikerString);
             videoSource.NewFrame += new NewFrameEventHandler(videoSource_NewFrame);
-
             videoSource.Start();
+        }
+
+        private void InitializeCaptureRect()
+        {
+            captureRect = new Rectangle(400, 200, 500, 300);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            pictureBox1.Size = this.ClientSize; // Set pictureBox1 size same as form size
+            InitializeCaptureRect();
         }
 
         private void videoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            pictureBox1.Image = (System.Drawing.Image)eventArgs.Frame.Clone();
+            pictureBox1.Image = (Bitmap)eventArgs.Frame.Clone();
+
+            // 在PictureBox上绘制捕获框框
+            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            {
+                g.DrawRectangle(Pens.Red, captureRect);
+            }
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -61,14 +72,25 @@ namespace WindowsFormsApp8
             }
         }
         int pictrue = 1;
+                
         private void TakePhoto()
         {
             if (pictureBox1.Image != null)
             {
-                string filePath = @"C:\Users\rainycat\Desktop\照片測試\"+pictrue+".jpg"; // Set your desired file path here
+                // 截取捕获框框内的图像
+                
+                Bitmap capturedImage = new Bitmap(captureRect.Width, captureRect.Height);
+                using (Graphics g = Graphics.FromImage(capturedImage))
+                {
+                    g.DrawImage(pictureBox1.Image, new Rectangle(0, 0, capturedImage.Width, capturedImage.Height),
+                                captureRect, GraphicsUnit.Pixel);
+                }
+
+                // 保存截取的图像
+                string filePath = @"C:\Users\rainycat\Desktop\照片測試\" + pictrue + ".jpg"; // Set your desired file path here
                 try
                 {
-                    pictureBox1.Image.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    capturedImage.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
                     pictrue += 1;
                 }
                 catch (Exception ex)
@@ -80,6 +102,13 @@ namespace WindowsFormsApp8
             {
                 MessageBox.Show("沒有可拍攝的畫面！");
             }
+        }
+
+        private void CenterForm()
+        {
+            int x = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
+            int y = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
+            this.Location = new Point(x, y);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
