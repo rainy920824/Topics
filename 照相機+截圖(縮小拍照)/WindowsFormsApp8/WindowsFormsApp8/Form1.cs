@@ -16,7 +16,7 @@ namespace WindowsFormsApp8
     {
         private FilterInfoCollection videoDevices;
         private VideoCaptureDevice videoSource;
-        private Rectangle captureRect; // 用于捕获图像的矩形区域
+        private Rectangle captureRect; 
 
         public Form1()
         {
