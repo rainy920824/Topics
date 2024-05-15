@@ -21,17 +21,18 @@ namespace WindowsFormsApp9
         SqlCommand cmdadd, cmdselect, cmdupdate, cmddelete;
         SqlDataReader reader;
         static string op;
-        static string op2="1";            
+        static string op2="1";
         private FilterInfoCollection videoDevices;
         private VideoCaptureDevice videoSource;
+        private Rectangle captureRect;
         private static SpeechRecognitionEngine recognizer;
         public photograph()
-        {                                
+        {
             InitializeComponent();
             InitializeCamera();
-            //pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            this.KeyPreview = true; // 啟用窗體接收按鍵事件
-            this.KeyDown += MainForm_KeyDown; // 綁定按鍵按下事件
+            InitializeCaptureRect();
+            this.KeyPreview = true;
+            this.KeyDown += MainForm_KeyDown;
             this.Resize += MainForm_Resize;
             int x = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
             int y = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
@@ -52,14 +53,34 @@ namespace WindowsFormsApp9
             videoSource.Start();
         }
 
+        private void InitializeCaptureRect()
+        {
+            captureRect = new Rectangle(400, 200, 500, 300);
+        }
+
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            pictureBox1.Size = this.ClientSize; // Set pictureBox1 size same as form size
+            InitializeCaptureRect();
         }
 
         private void videoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            pictureBox1.Image = (System.Drawing.Image)eventArgs.Frame.Clone();
+            Bitmap newFrame = (Bitmap)eventArgs.Frame.Clone();
+
+            // 清除原有的 PictureBox 图像
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image.Dispose();
+            }
+
+            // 将新的帧设置为 PictureBox 的图像
+            pictureBox1.Image = newFrame;
+
+            // 在 PictureBox 上绘制捕获框框
+            using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+            {
+                g.DrawRectangle(Pens.Red, captureRect);
+            }
         }
         int no = 1;
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -83,6 +104,7 @@ namespace WindowsFormsApp9
                    
                     if (op!=op2)
                     {
+                        //修改照片位置
                         string folderPath = @"C:\Users\rainycat\Desktop\照片測試\";
                         string[] imagePaths = Directory.GetFiles(folderPath, pictrue+".jpg");
                         string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
@@ -122,11 +144,32 @@ namespace WindowsFormsApp9
         {
             if (pictureBox1.Image != null)
             {
-                string filePath = @"C:\Users\rainycat\Desktop\照片測試\" + pictrue + ".jpg"; // Set your desired file path here
+                string directoryPath = @"C:\Users\rainycat\Desktop\照片測試\";
+                string filePath;
+
+                // 循环直到找到一个不存在的文件路径
+                while (true)
+                {
+                    filePath = Path.Combine(directoryPath, pictrue + ".jpg");
+                    if (!File.Exists(filePath))
+                    {
+                        break; // 找到不存在的文件路径时跳出循环
+                    }
+                    pictrue++;
+                }
+                // 截取捕获框框内的图像
+
+                Bitmap capturedImage = new Bitmap(captureRect.Width, captureRect.Height);
+                using (Graphics g = Graphics.FromImage(capturedImage))
+                {
+                    g.DrawImage(pictureBox1.Image, new Rectangle(0, 0, capturedImage.Width, capturedImage.Height),
+                                captureRect, GraphicsUnit.Pixel);
+                }
+
+                // 保存截取的图像
                 try
                 {
-                    pictureBox1.Image.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    
+                    capturedImage.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
                 catch (Exception ex)
                 {

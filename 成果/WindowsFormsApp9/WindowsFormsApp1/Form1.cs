@@ -22,7 +22,8 @@ namespace WindowsFormsApp1
             string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string path = (System.IO.Path.GetDirectoryName(executable));
             AppDomain.CurrentDomain.SetData("DataDirectory", path.Substring(0, path.Length - 10));
-            SqlConnection cnn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rainycat\source\repos\WindowsFormsApp9\WindowsFormsApp9\Database1.mdf;Integrated Security=True");
+            //絕對路徑修改
+            SqlConnection cnn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\Database1.mdf;Integrated Security=True");
            
             cnn.Open();
             cmdselect = new SqlCommand("SELECT * FROM election", cnn);
@@ -66,8 +67,8 @@ namespace WindowsFormsApp1
             if (listBox1.SelectedIndex != -1)
             {
                 string selectedNo = listBox1.SelectedItem.ToString().Split('\t')[0];
-
-                SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rainycat\source\repos\WindowsFormsApp9\WindowsFormsApp9\Database1.mdf;Integrated Security=True");
+                //絕對路徑修改
+                SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\Database1.mdf;Integrated Security=True");
                 SqlCommand cmd = new SqlCommand("SELECT* FROM election WHERE no = @no", conn);
                 conn.Open();
                 cmd.Parameters.AddWithValue("@no", selectedNo);
