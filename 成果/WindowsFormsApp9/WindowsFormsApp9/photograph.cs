@@ -133,7 +133,6 @@ namespace WindowsFormsApp9
                         no++;
                         num = 1;
                         pictrue += 1;
-                        //cmdadd.Parameters.Add(new SqlParameter("@picture", SqlDbType.Image) { Value = imageData });
                     }
                 }
             }
