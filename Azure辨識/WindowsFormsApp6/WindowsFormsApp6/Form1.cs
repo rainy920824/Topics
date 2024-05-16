@@ -30,7 +30,7 @@ namespace WindowsFormsApp6
         {
             
             string predictionKey = "9633831a76db4504acb73519d2a49c2d";
-            string imagePath = @"C:\Users\rainy\OneDrive\桌面\專\"+num+".png";
+            string imagePath = @"C:\Users\rainycat\Desktop\照片測試\" + num+".jpg";
             try
             {
                 // 讀取圖像檔案的位元組數據
@@ -39,7 +39,7 @@ namespace WindowsFormsApp6
                 // 設定請求
                 using (var httpClient = new HttpClient())
                 {
-                    using (var request = new HttpRequestMessage(HttpMethod.Post, "https://113008241-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/7f8fad0a-a5ce-4114-844d-15ac6f19d5b2/detect/iterations/Iteration1/image"))
+                    using (var request = new HttpRequestMessage(HttpMethod.Post, "https://113008241-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/0c4e4e18-5f66-4b2b-993a-3179dec884a6/classify/iterations/Iteration17/image"))
                     {
                         // 設定標頭
                         request.Headers.Add("Prediction-Key", predictionKey.ToLower());

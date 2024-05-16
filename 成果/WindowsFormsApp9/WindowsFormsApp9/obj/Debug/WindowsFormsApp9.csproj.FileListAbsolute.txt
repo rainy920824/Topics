@@ -248,3 +248,8 @@ C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\obj\De
 C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\obj\Debug\WindowsFormsApp9.csproj.CopyComplete
 C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\obj\Debug\WindowsFormsApp9.exe
 C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\obj\Debug\WindowsFormsApp9.pdb
+C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\bin\Debug\Microsoft.Rest.ClientRuntime.Azure.dll
+C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\bin\Debug\Microsoft.Rest.ClientRuntime.dll
+C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\bin\Debug\Newtonsoft.Json.dll
+C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\bin\Debug\Microsoft.Rest.ClientRuntime.Azure.xml
+C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\bin\Debug\Newtonsoft.Json.xml

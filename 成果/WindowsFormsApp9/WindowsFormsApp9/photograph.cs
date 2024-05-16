@@ -13,6 +13,8 @@ using System.Speech.Recognition;
 using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.IO;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
 
 namespace WindowsFormsApp9
 {
@@ -32,7 +34,7 @@ namespace WindowsFormsApp9
             InitializeCamera();
             InitializeCaptureRect();
             this.KeyPreview = true;
-            this.KeyDown += MainForm_KeyDown;
+            this.KeyDown += MainForm_KeyDownAsync;
             this.Resize += MainForm_Resize;
             int x = (Screen.PrimaryScreen.Bounds.Width - this.Width) / 2;
             int y = (Screen.PrimaryScreen.Bounds.Height - this.Height) / 2;
@@ -83,7 +85,7 @@ namespace WindowsFormsApp9
             }
         }
         int no = 1;
-        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        private async void MainForm_KeyDownAsync(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space) // 按下空格鍵拍照
             {
@@ -91,8 +93,9 @@ namespace WindowsFormsApp9
                 {
                     label1.Text = "語音開啟中";
                     label1.ForeColor = Color.Red;
-                    TakePhoto();
-                    mic();
+                    await TakePhotoAsync();
+
+
                     num = 2;
                 }else if(num==2)
                 {
@@ -118,8 +121,8 @@ namespace WindowsFormsApp9
                         cmdadd = new SqlCommand("insert into election(no, photo,voice,picture) values (@no,@photo,@voice, @imageData)", cnn);
                         cnn.Open();
                         cmdadd.Parameters.Add(new SqlParameter("@no", no));
-                        cmdadd.Parameters.Add(new SqlParameter("@photo", op));
-                        cmdadd.Parameters.Add(new SqlParameter("@voice", op2));
+                        cmdadd.Parameters.Add(new SqlParameter("@photo", op2));
+                        cmdadd.Parameters.Add(new SqlParameter("@voice", op));
                         cmdadd.Parameters.Add(new SqlParameter("@imageData", SqlDbType.Image));
                         foreach (string imagePath in imagePaths)
                         {
@@ -140,7 +143,7 @@ namespace WindowsFormsApp9
         }
         int pictrue = 1,num=1;
 
-        private void TakePhoto()
+        private async Task TakePhotoAsync()
         {
             if (pictureBox1.Image != null)
             {
@@ -174,6 +177,51 @@ namespace WindowsFormsApp9
                 catch (Exception ex)
                 {
                     MessageBox.Show("保存圖片時出錯：" + ex.Message);
+                }
+                mic();
+                string predictionKey = "9633831a76db4504acb73519d2a49c2d";
+                try
+                {
+                    // 讀取圖像檔案的位元組數據
+                    byte[] imageBytes = File.ReadAllBytes(filePath);
+
+                    // 設定請求
+                    using (var httpClient = new HttpClient())
+                    {
+                        using (var request = new HttpRequestMessage(HttpMethod.Post, "https://113008241-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/0c4e4e18-5f66-4b2b-993a-3179dec884a6/classify/iterations/Iteration17/image"))
+                        {
+                            // 設定標頭
+                            request.Headers.Add("Prediction-Key", predictionKey.ToLower());
+                            request.Content = new ByteArrayContent(imageBytes);
+                            request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+
+                            // 設定正文
+                            request.Content = new ByteArrayContent(imageBytes);
+
+                            // 發送請求
+                            using (var response = await httpClient.SendAsync(request))
+                            {
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    // 處理回應
+                                    string responseBody = await response.Content.ReadAsStringAsync();
+                                    string json = responseBody;
+                                    JObject jsonObject = JObject.Parse(json);
+                                    string tag = jsonObject["predictions"][0]["tagName"].ToString();
+                                    op2 = tag;
+                                    num += 1;
+                                }
+                                else
+                                {
+                                    MessageBox.Show($"Error: {response.StatusCode}", "Error");
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}", "Error");
                 }
             }
             else
@@ -224,7 +272,6 @@ namespace WindowsFormsApp9
                         op = "no";
                 }
             }
-            op = "no";          //測試
         }
     }
 }
