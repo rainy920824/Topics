@@ -57,7 +57,7 @@ namespace WindowsFormsApp9
 
         private void InitializeCaptureRect()
         {
-            captureRect = new Rectangle(400, 200, 500, 300);
+            captureRect = new Rectangle(20, 75, 520, 350);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -89,13 +89,12 @@ namespace WindowsFormsApp9
         {
             if (e.KeyCode == Keys.Space) // 按下空格鍵拍照
             {
-                if(num==1)
+                if (num==1)
                 {
+
                     label1.Text = "語音開啟中";
                     label1.ForeColor = Color.Red;
                     await TakePhotoAsync();
-
-
                     num = 2;
                 }else if(num==2)
                 {
@@ -114,10 +113,10 @@ namespace WindowsFormsApp9
                         string path = (System.IO.Path.GetDirectoryName(executable));
                         AppDomain.CurrentDomain.SetData("DataDirectory", path.Substring(0, path.Length - 10));
                         SqlConnection cnn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database1.mdf;Integrated Security=True");
-                        //cmddelete = new SqlCommand("delete from election", cnn);
-                        //cnn.Open();
-                        //cmddelete.ExecuteNonQuery();
-                        //cnn.Close();
+                        cmddelete = new SqlCommand("delete from election", cnn);
+                        cnn.Open();
+                        cmddelete.ExecuteNonQuery();
+                        cnn.Close();
                         cmdadd = new SqlCommand("insert into election(no, photo,voice,picture) values (@no,@photo,@voice, @imageData)", cnn);
                         cnn.Open();
                         cmdadd.Parameters.Add(new SqlParameter("@no", no));
@@ -271,6 +270,8 @@ namespace WindowsFormsApp9
                     else
                         op = "no";
                 }
+                else
+                    op = "no";
             }
         }
     }

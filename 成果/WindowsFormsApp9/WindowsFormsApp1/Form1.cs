@@ -29,7 +29,7 @@ namespace WindowsFormsApp1
             cmdselect = new SqlCommand("SELECT * FROM election", cnn);
             reader = cmdselect.ExecuteReader();
             listBox1.Items.Clear();
-            listBox2.Items.Insert(0, "編號\t\t\t語音辨識結果\t\t圖片辨識結果");
+            listBox2.Items.Insert(0, "編號\t\t\t圖片辨識結果\t\t語音辨識結果");
             //listBox1.Items.Add("編號\t\t\t語音辨識結果\t\t圖片辨識結果");
             while (reader.Read())
             {
