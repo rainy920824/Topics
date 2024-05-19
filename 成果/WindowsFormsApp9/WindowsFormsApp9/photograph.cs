@@ -22,7 +22,7 @@ namespace WindowsFormsApp9
     {
         SqlCommand cmdadd, cmdselect, cmdupdate, cmddelete;
         SqlDataReader reader;
-        static string op;
+        static string voice;
         static string op2="1";
         private FilterInfoCollection videoDevices;
         private VideoCaptureDevice videoSource;
@@ -93,18 +93,22 @@ namespace WindowsFormsApp9
                 {
 
                     label1.Text = "語音開啟中";
+                    mic();
                     label1.ForeColor = Color.Red;
+                    
                     await TakePhotoAsync();
                     num = 2;
                 }else if(num==2)
                 {
+                    if (voice == null)
+                        voice = "no";
                     recognizer.RecognizeAsyncStop();
                     label1.Text = "語音關閉中";
                     label1.ForeColor = Color.Black;
                     //checktickets1.uuu.Text=op;      //先去別的視窗把那個物件打開public
                     // 文件夹路径
                    
-                    if (op!=op2)
+                    if (voice!=op2)
                     {
                         //修改照片位置
                         string folderPath = @"C:\Users\rainycat\Desktop\照片測試\";
@@ -112,16 +116,16 @@ namespace WindowsFormsApp9
                         string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
                         string path = (System.IO.Path.GetDirectoryName(executable));
                         AppDomain.CurrentDomain.SetData("DataDirectory", path.Substring(0, path.Length - 10));
-                        SqlConnection cnn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database1.mdf;Integrated Security=True");
-                        cmddelete = new SqlCommand("delete from election", cnn);
-                        cnn.Open();
-                        cmddelete.ExecuteNonQuery();
-                        cnn.Close();
+                        SqlConnection cnn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\rainycat\Desktop\Topics\成果\WindowsFormsApp9\WindowsFormsApp9\Database1.mdf;Integrated Security=True");
+                        //cmddelete = new SqlCommand("delete from election", cnn);
+                        //cnn.Open();
+                        //cmddelete.ExecuteNonQuery();
+                        //cnn.Close();
                         cmdadd = new SqlCommand("insert into election(no, photo,voice,picture) values (@no,@photo,@voice, @imageData)", cnn);
                         cnn.Open();
                         cmdadd.Parameters.Add(new SqlParameter("@no", no));
                         cmdadd.Parameters.Add(new SqlParameter("@photo", op2));
-                        cmdadd.Parameters.Add(new SqlParameter("@voice", op));
+                        cmdadd.Parameters.Add(new SqlParameter("@voice", voice));
                         cmdadd.Parameters.Add(new SqlParameter("@imageData", SqlDbType.Image));
                         foreach (string imagePath in imagePaths)
                         {
@@ -133,10 +137,11 @@ namespace WindowsFormsApp9
                         }
                         cnn.Close();
                         no++;
-                        num = 1;
+                        
                         pictrue += 1;
                         //cmdadd.Parameters.Add(new SqlParameter("@picture", SqlDbType.Image) { Value = imageData });
                     }
+                    num = 1;
                 }
             }
         }
@@ -177,7 +182,7 @@ namespace WindowsFormsApp9
                 {
                     MessageBox.Show("保存圖片時出錯：" + ex.Message);
                 }
-                mic();
+                
                 string predictionKey = "9633831a76db4504acb73519d2a49c2d";
                 try
                 {
@@ -208,7 +213,10 @@ namespace WindowsFormsApp9
                                     JObject jsonObject = JObject.Parse(json);
                                     string tag = jsonObject["predictions"][0]["tagName"].ToString();
                                     op2 = tag;
-                                    num += 1;
+                                    if (op2 == "invalid")
+                                    {
+                                        op2 = "no";
+                                    }
                                 }
                                 else
                                 {
@@ -251,27 +259,28 @@ namespace WindowsFormsApp9
             recognizer.SetInputToDefaultAudioDevice();
             recognizer.RecognizeAsync(RecognizeMode.Multiple);
         }
-        
+        static string ss;
         private static void RecognizerSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             if (e.Result != null && e.Result.Confidence > 0.5)
             {
-                op = e.Result.Text;
-                if (op.Length > 2)
+                voice = e.Result.Text;
+                ss= voice;
+                if (voice.Length > 2)
                 {
-                    if (op.Substring(0, 2) == "一好" || op.Substring(0, 2) == "一套" || op.Substring(0, 2) == "一號" || op.Substring(0, 2) == "一報" || op.Substring(0, 2) == "以好")
-                        op = "1";
-                    else if (op.Substring(0, 2) == "噩耗" || op.Substring(0, 2) == "二號" || op.Substring(0, 2) == "二報" || op.Substring(0, 1) == "，" || op.Substring(0, 2) == "何厚" || op.Substring(0, 2) == "俄少" || op.Substring(0, 2) == "二到")
-                        op = "2";
-                    else if (op.Substring(0, 2) == "三好" || op.Substring(0, 2) == "三號" || op.Substring(0, 2) == "商號" || op.Substring(0, 2) == "張皓" || op.Substring(0, 2) == "三報" || op.Substring(0, 2) == "單號")
-                        op = "3";
-                    else if (op.Substring(0, 2) == "無效" || op.Substring(0, 2) == "不肖" || op.Substring(0, 3) == "吳笑料")
-                        op = "no";
+                    if (voice.Substring(0, 2) == "一好" || voice.Substring(0, 2) == "一套" || voice.Substring(0, 2) == "一號" || voice.Substring(0, 2) == "一報" || voice.Substring(0, 2) == "以好" || voice.Substring(0,3) == "無敵號")
+                        voice = "1";
+                    else if (voice.Substring(0, 2) == "噩耗" || voice.Substring(0, 2) == "二號" || voice.Substring(0, 2) == "二報" || voice.Substring(0, 1) == "，" || voice.Substring(0, 2) == "何厚" || voice.Substring(0, 2) == "俄少" || voice.Substring(0, 2) == "二到" || voice.Substring(0, 2) == "吳爾塔")
+                        voice = "2";
+                    else if (voice.Substring(0, 2) == "三好" || voice.Substring(0, 2) == "三號" || voice.Substring(0, 2) == "商號" || voice.Substring(0, 2) == "張皓" || voice.Substring(0, 2) == "三報" || voice.Substring(0, 2) == "單號" || voice.Substring(0, 2) == "吳三號")
+                        voice = "3";
+                    else if (voice.Substring(0, 2) == "無效" || voice.Substring(0, 2) == "不肖" || voice.Substring(0, 3) == "吳笑料" || voice.Substring(0, 3) == "伏霞票")
+                        voice = "no";
                     else
-                        op = "no";
+                        voice = "no";
                 }
-                else
-                    op = "no";
+                else if (voice.Length < 3)
+                    voice = "no";
             }
         }
     }
