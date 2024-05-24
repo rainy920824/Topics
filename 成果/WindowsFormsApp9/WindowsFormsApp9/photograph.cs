@@ -274,7 +274,7 @@ namespace WindowsFormsApp9
                         voice = "2";
                     else if (voice.Substring(0, 2) == "三好" || voice.Substring(0, 2) == "三號" || voice.Substring(0, 2) == "商號" || voice.Substring(0, 2) == "張皓" || voice.Substring(0, 2) == "三報" || voice.Substring(0, 2) == "單號" || voice.Substring(0, 2) == "吳三號")
                         voice = "3";
-                    else if (voice.Substring(0, 2) == "無效" || voice.Substring(0, 2) == "不肖" || voice.Substring(0, 3) == "吳笑料" || voice.Substring(0, 3) == "伏霞票")
+                    else if (voice.Substring(0, 2) == "無效" || voice.Substring(0, 2) == "不肖" || voice.Substring(0, 3) == "吳笑料" || voice.Substring(0, 3) == "伏霞票" || voice.Substring(0, 3) == "不少票")
                         voice = "no";
                     else
                         voice = "no";
